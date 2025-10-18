@@ -1,0 +1,331 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Term Deposit Calculator</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+        }
+    </style>
+</head>
+<body class="bg-gradient-to-br from-green-50 to-teal-50 min-h-screen p-6">
+    <div class="max-w-5xl mx-auto">
+        <div class="bg-white rounded-lg shadow-lg p-8">
+            <!-- Header -->
+            <div class="flex items-center gap-3 mb-6">
+                <svg class="text-teal-600" width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <line x1="12" y1="1" x2="12" y2="23"></line>
+                    <path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"></path>
+                </svg>
+                <h1 class="text-3xl font-bold text-gray-800">Term Deposit Calculator</h1>
+            </div>
+
+            <!-- Input Section -->
+            <div class="bg-gradient-to-r from-teal-50 to-cyan-50 p-6 rounded-lg mb-8 border-2 border-teal-200">
+                <h2 class="text-xl font-bold text-teal-900 mb-4">Enter Your Deposit Details</h2>
+                <div class="grid md:grid-cols-2 gap-6">
+                    <!-- Principal Amount -->
+                    <div>
+                        <label class="block text-sm font-semibold text-gray-700 mb-2">
+                            Principal Amount (₹)
+                        </label>
+                        <input type="number" id="principal" value="100000"
+                            class="w-full px-4 py-2 border-2 border-teal-300 rounded-lg focus:outline-none focus:border-teal-500"
+                            placeholder="100000">
+                    </div>
+
+                    <!-- Interest Rate -->
+                    <div>
+                        <label class="block text-sm font-semibold text-gray-700 mb-2">
+                            Annual Interest Rate (%)
+                        </label>
+                        <input type="number" id="interestRate" value="7.5" step="0.01"
+                            class="w-full px-4 py-2 border-2 border-teal-300 rounded-lg focus:outline-none focus:border-teal-500"
+                            placeholder="7.5">
+                    </div>
+
+                    <!-- Compounding Frequency -->
+                    <div>
+                        <label class="block text-sm font-semibold text-gray-700 mb-2">
+                            Compounding Frequency
+                        </label>
+                        <select id="compounding"
+                            class="w-full px-4 py-2 border-2 border-teal-300 rounded-lg focus:outline-none focus:border-teal-500">
+                            <option value="365">Daily</option>
+                            <option value="52">Weekly</option>
+                            <option value="26">Fortnightly</option>
+                            <option value="12">Monthly</option>
+                            <option value="4" selected>Quarterly</option>
+                            <option value="2">Half-Yearly</option>
+                            <option value="1">Annually</option>
+                        </select>
+                    </div>
+
+                    <!-- Start Date -->
+                    <div>
+                        <label class="block text-sm font-semibold text-gray-700 mb-2">
+                            Start Date
+                        </label>
+                        <input type="date" id="startDate" value="2024-01-01"
+                            class="w-full px-4 py-2 border-2 border-teal-300 rounded-lg focus:outline-none focus:border-teal-500">
+                    </div>
+
+                    <!-- Duration Type -->
+                    <div class="md:col-span-2">
+                        <label class="block text-sm font-semibold text-gray-700 mb-2">
+                            Choose Duration Method
+                        </label>
+                        <div class="flex gap-4">
+                            <label class="flex items-center gap-2 cursor-pointer">
+                                <input type="radio" name="durationType" value="period" checked onchange="toggleDurationType()">
+                                <span class="text-gray-700">Specify Duration</span>
+                            </label>
+                            <label class="flex items-center gap-2 cursor-pointer">
+                                <input type="radio" name="durationType" value="endDate" onchange="toggleDurationType()">
+                                <span class="text-gray-700">Specify End Date</span>
+                            </label>
+                        </div>
+                    </div>
+
+                    <!-- Duration Inputs -->
+                    <div id="durationInputs" class="md:col-span-2">
+                        <div class="grid md:grid-cols-3 gap-4">
+                            <div>
+                                <label class="block text-sm font-semibold text-gray-700 mb-2">
+                                    Years
+                                </label>
+                                <input type="number" id="years" value="2" min="0"
+                                    class="w-full px-4 py-2 border-2 border-teal-300 rounded-lg focus:outline-none focus:border-teal-500"
+                                    placeholder="0">
+                            </div>
+                            <div>
+                                <label class="block text-sm font-semibold text-gray-700 mb-2">
+                                    Months
+                                </label>
+                                <input type="number" id="months" value="0" min="0" max="11"
+                                    class="w-full px-4 py-2 border-2 border-teal-300 rounded-lg focus:outline-none focus:border-teal-500"
+                                    placeholder="0">
+                            </div>
+                            <div>
+                                <label class="block text-sm font-semibold text-gray-700 mb-2">
+                                    Days
+                                </label>
+                                <input type="number" id="days" value="0" min="0" max="30"
+                                    class="w-full px-4 py-2 border-2 border-teal-300 rounded-lg focus:outline-none focus:border-teal-500"
+                                    placeholder="0">
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- End Date Input -->
+                    <div id="endDateInput" class="md:col-span-2" style="display: none;">
+                        <label class="block text-sm font-semibold text-gray-700 mb-2">
+                            End Date (Maturity Date)
+                        </label>
+                        <input type="date" id="endDate" value="2026-01-01"
+                            class="w-full px-4 py-2 border-2 border-teal-300 rounded-lg focus:outline-none focus:border-teal-500">
+                    </div>
+
+                    <!-- Calculate Button -->
+                    <div class="md:col-span-2">
+                        <button onclick="calculateTD()"
+                            class="w-full bg-teal-600 hover:bg-teal-700 text-white font-bold py-3 px-6 rounded-lg transition-colors text-lg">
+                            Calculate Maturity Amount
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Results Section -->
+            <div id="results" style="display: none;">
+                <div class="grid md:grid-cols-3 gap-6 mb-8">
+                    <div class="bg-blue-50 p-6 rounded-lg">
+                        <h3 class="text-sm text-gray-600 mb-2">Principal Amount</h3>
+                        <p class="text-3xl font-bold text-blue-600" id="displayPrincipal">-</p>
+                    </div>
+                    
+                    <div class="bg-green-50 p-6 rounded-lg">
+                        <h3 class="text-sm text-gray-600 mb-2">Total Interest Earned</h3>
+                        <p class="text-3xl font-bold text-green-600" id="displayInterest">-</p>
+                    </div>
+                    
+                    <div class="bg-purple-50 p-6 rounded-lg">
+                        <h3 class="text-sm text-gray-600 mb-2">Maturity Amount</h3>
+                        <p class="text-3xl font-bold text-purple-600" id="displayMaturity">-</p>
+                    </div>
+                </div>
+
+                <div class="bg-gradient-to-r from-teal-100 to-cyan-100 p-6 rounded-lg mb-6">
+                    <h3 class="text-xl font-bold text-teal-900 mb-4">Investment Summary</h3>
+                    <div class="grid md:grid-cols-2 gap-4 text-sm">
+                        <div class="flex justify-between">
+                            <span class="text-gray-700 font-semibold">Interest Rate:</span>
+                            <span class="text-gray-900 font-bold" id="summaryRate">-</span>
+                        </div>
+                        <div class="flex justify-between">
+                            <span class="text-gray-700 font-semibold">Compounding:</span>
+                            <span class="text-gray-900 font-bold" id="summaryCompounding">-</span>
+                        </div>
+                        <div class="flex justify-between">
+                            <span class="text-gray-700 font-semibold">Start Date:</span>
+                            <span class="text-gray-900 font-bold" id="summaryStart">-</span>
+                        </div>
+                        <div class="flex justify-between">
+                            <span class="text-gray-700 font-semibold">Maturity Date:</span>
+                            <span class="text-gray-900 font-bold" id="summaryEnd">-</span>
+                        </div>
+                        <div class="flex justify-between">
+                            <span class="text-gray-700 font-semibold">Duration:</span>
+                            <span class="text-gray-900 font-bold" id="summaryDuration">-</span>
+                        </div>
+                        <div class="flex justify-between">
+                            <span class="text-gray-700 font-semibold">Effective Return:</span>
+                            <span class="text-gray-900 font-bold" id="summaryEffective">-</span>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="bg-gradient-to-r from-orange-50 to-yellow-50 p-6 rounded-lg border-2 border-orange-200">
+                    <h3 class="text-lg font-bold text-orange-900 mb-3">Understanding Your Returns</h3>
+                    <div class="space-y-2 text-sm text-gray-700">
+                        <div class="flex gap-2">
+                            <span class="text-teal-600 font-bold">•</span>
+                            <p><strong>Compound Interest Formula:</strong> A = P(1 + r/n)^(nt)</p>
+                        </div>
+                        <div class="flex gap-2">
+                            <span class="text-teal-600 font-bold">•</span>
+                            <p>More frequent compounding = Higher returns</p>
+                        </div>
+                        <div class="flex gap-2">
+                            <span class="text-teal-600 font-bold">•</span>
+                            <p><strong>Effective Return</strong> shows total percentage gain on your investment</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        function toggleDurationType() {
+            const durationType = document.querySelector('input[name="durationType"]:checked').value;
+            const durationInputs = document.getElementById('durationInputs');
+            const endDateInput = document.getElementById('endDateInput');
+            
+            if (durationType === 'period') {
+                durationInputs.style.display = 'block';
+                endDateInput.style.display = 'none';
+            } else {
+                durationInputs.style.display = 'none';
+                endDateInput.style.display = 'block';
+            }
+        }
+
+        function formatCurrency(num) {
+            return '₹' + num.toLocaleString('en-IN', {minimumFractionDigits: 2, maximumFractionDigits: 2});
+        }
+
+        function formatDate(dateStr) {
+            const date = new Date(dateStr);
+            const months = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
+            return `${date.getDate()} ${months[date.getMonth()]} ${date.getFullYear()}`;
+        }
+
+        function getCompoundingName(freq) {
+            const names = {
+                '365': 'Daily',
+                '52': 'Weekly',
+                '26': 'Fortnightly',
+                '12': 'Monthly',
+                '4': 'Quarterly',
+                '2': 'Half-Yearly',
+                '1': 'Annually'
+            };
+            return names[freq] || freq + ' times/year';
+        }
+
+        function calculateDurationInYears(startDate, endDate) {
+            const start = new Date(startDate);
+            const end = new Date(endDate);
+            const diffTime = Math.abs(end - start);
+            const diffDays = diffTime / (1000 * 60 * 60 * 24);
+            return diffDays / 365;
+        }
+
+        function addDuration(startDate, years, months, days) {
+            const date = new Date(startDate);
+            date.setFullYear(date.getFullYear() + parseInt(years));
+            date.setMonth(date.getMonth() + parseInt(months));
+            date.setDate(date.getDate() + parseInt(days));
+            return date;
+        }
+
+        function formatDuration(totalDays) {
+            const years = Math.floor(totalDays / 365);
+            const remainingDays = totalDays % 365;
+            const months = Math.floor(remainingDays / 30);
+            const days = Math.floor(remainingDays % 30);
+            
+            let parts = [];
+            if (years > 0) parts.push(years + ' year' + (years > 1 ? 's' : ''));
+            if (months > 0) parts.push(months + ' month' + (months > 1 ? 's' : ''));
+            if (days > 0) parts.push(days + ' day' + (days > 1 ? 's' : ''));
+            
+            return parts.join(', ') || '0 days';
+        }
+
+        function calculateTD() {
+            const principal = parseFloat(document.getElementById('principal').value);
+            const annualRate = parseFloat(document.getElementById('interestRate').value) / 100;
+            const compoundingFreq = parseInt(document.getElementById('compounding').value);
+            const startDate = document.getElementById('startDate').value;
+            const durationType = document.querySelector('input[name="durationType"]:checked').value;
+            
+            let endDate;
+            let timeInYears;
+            
+            if (durationType === 'period') {
+                const years = parseInt(document.getElementById('years').value) || 0;
+                const months = parseInt(document.getElementById('months').value) || 0;
+                const days = parseInt(document.getElementById('days').value) || 0;
+                
+                endDate = addDuration(startDate, years, months, days);
+                timeInYears = calculateDurationInYears(startDate, endDate);
+            } else {
+                endDate = new Date(document.getElementById('endDate').value);
+                timeInYears = calculateDurationInYears(startDate, endDate);
+            }
+            
+            // Calculate compound interest: A = P(1 + r/n)^(nt)
+            const maturityAmount = principal * Math.pow(1 + (annualRate / compoundingFreq), compoundingFreq * timeInYears);
+            const interestEarned = maturityAmount - principal;
+            const effectiveReturn = ((maturityAmount - principal) / principal) * 100;
+            
+            // Calculate total days for duration display
+            const totalDays = Math.round(timeInYears * 365);
+            
+            // Update display
+            document.getElementById('displayPrincipal').textContent = formatCurrency(principal);
+            document.getElementById('displayInterest').textContent = formatCurrency(interestEarned);
+            document.getElementById('displayMaturity').textContent = formatCurrency(maturityAmount);
+            
+            document.getElementById('summaryRate').textContent = (annualRate * 100).toFixed(2) + '% p.a.';
+            document.getElementById('summaryCompounding').textContent = getCompoundingName(compoundingFreq);
+            document.getElementById('summaryStart').textContent = formatDate(startDate);
+            document.getElementById('summaryEnd').textContent = formatDate(endDate);
+            document.getElementById('summaryDuration').textContent = formatDuration(totalDays);
+            document.getElementById('summaryEffective').textContent = effectiveReturn.toFixed(2) + '%';
+            
+            document.getElementById('results').style.display = 'block';
+        }
+
+        // Calculate on page load
+        window.onload = function() {
+            calculateTD();
+        };
+    </script>
+</body>
+</html>
